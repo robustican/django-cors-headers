@@ -64,6 +64,18 @@ class TestCorsMiddlewareProcessRequest(TestCase):
         request = Mock(path='/')
         request.method = 'GET'
         request.is_secure = lambda: True
+
+        # make sure it doesnt blow up when HTTP_REFERER is not present
+        request.META = {
+            'HTTP_HOST': 'foobar.com',
+            'HTTP_ORIGIN': 'https://foo.google.com',
+        }
+        with settings_override(CORS_URLS_REGEX='^.*$',
+                               CORS_ORIGIN_REGEX_WHITELIST='.*google.*',
+                               CORS_REPLACE_HTTPS_REFERER=True):
+            response = self.middleware.process_request(request)
+        self.assertIsNone(response)
+
         request.META = {
             'HTTP_REFERER': 'https://foo.google.com/',
             'HTTP_HOST': 'foobar.com',

@@ -53,8 +53,9 @@ class CorsMiddleware(object):
 
         if request.is_secure() and origin:
             url = urlparse(origin)
-            if (not settings.CORS_ORIGIN_ALLOW_ALL and
-                    self.origin_not_found_in_white_lists(origin, url)):
+            if ('HTTP_REFERER' not in request.META or
+                    (not settings.CORS_ORIGIN_ALLOW_ALL and
+                    self.origin_not_found_in_white_lists(origin, url))):
                 return
 
             request.META = request.META.copy()
