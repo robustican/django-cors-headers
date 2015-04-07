@@ -7,7 +7,11 @@ except ImportError:
     from urllib.parse import urlparse
 
 from corsheaders import defaults as settings
-from django.db.models.loading import get_model
+try:
+    from django.apps import apps
+    get_model = apps.get_model
+except ImportError:
+    from django.db.models.loading import get_model
 
 
 ACCESS_CONTROL_ALLOW_ORIGIN = 'Access-Control-Allow-Origin'
