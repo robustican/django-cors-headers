@@ -1,4 +1,5 @@
 import re
+import logging
 
 from django import http
 try:
@@ -13,6 +14,7 @@ try:
 except ImportError:
     from django.db.models.loading import get_model
 
+loggly = logging.getLogger('loggly')
 
 ACCESS_CONTROL_ALLOW_ORIGIN = 'Access-Control-Allow-Origin'
 ACCESS_CONTROL_EXPOSE_HEADERS = 'Access-Control-Expose-Headers'
@@ -54,6 +56,8 @@ class CorsMiddleware(object):
         succeeds
         """
         origin = request.META.get('HTTP_ORIGIN')
+
+        loggly.debug("requestmeta:%s" % request.META)
 
         if request.is_secure() and origin:
             url = urlparse(origin)
