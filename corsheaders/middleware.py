@@ -1,5 +1,4 @@
 import re
-import logging
 
 from django import http
 try:
@@ -14,7 +13,6 @@ try:
 except ImportError:
     from django.db.models.loading import get_model
 
-loggly = logging.getLogger('loggly')
 
 ACCESS_CONTROL_ALLOW_ORIGIN = 'Access-Control-Allow-Origin'
 ACCESS_CONTROL_EXPOSE_HEADERS = 'Access-Control-Expose-Headers'
@@ -67,13 +65,8 @@ class CorsMiddleware(object):
             request.META = request.META.copy()
             http_referer = request.META['HTTP_REFERER']
             request.META['ORIGINAL_HTTP_REFERER'] = http_referer
-            http_host = "https://%s/" % request.get_host()
+            http_host = "https://%s/" % request.META['HTTP_HOST']
             request.META['HTTP_REFERER'] = http_host
-
-            if request.method == 'PUT':
-                loggly.debug("new referrer:%s" % request.META['HTTP_REFERER'])
-                loggly.debug("original referrer:%s" % request.META['ORIGINAL_HTTP_REFERER'])
-                loggly.debug("http_host:%s" % http_host)
 
     def process_request(self, request):
         """
