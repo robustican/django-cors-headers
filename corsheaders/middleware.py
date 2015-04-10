@@ -57,17 +57,12 @@ class CorsMiddleware(object):
         """
         origin = request.META.get('HTTP_ORIGIN')
 
-        loggly.debug("here")
-
         if request.is_secure() and origin:
-            loggly.debug("here1")
             url = urlparse(origin)
             if ('HTTP_REFERER' not in request.META or
                     (not settings.CORS_ORIGIN_ALLOW_ALL and
                     self.origin_not_found_in_white_lists(origin, url))):
                 return
-
-            loggly.debug("here2")
 
             request.META = request.META.copy()
             http_referer = request.META['HTTP_REFERER']
@@ -75,9 +70,10 @@ class CorsMiddleware(object):
             http_host = "https://%s/" % request.get_host()
             request.META['HTTP_REFERER'] = http_host
 
-            loggly.debug("new referrer:%s" % request.META['HTTP_REFERER'])
-            loggly.debug("original referrer:%s" % request.META['ORIGINAL_HTTP_REFERER'])
-            loggly.debug("http_host:%s" % http_host)
+            if request.method == 'PUT':
+                loggly.debug("new referrer:%s" % request.META['HTTP_REFERER'])
+                loggly.debug("original referrer:%s" % request.META['ORIGINAL_HTTP_REFERER'])
+                loggly.debug("http_host:%s" % http_host)
 
     def process_request(self, request):
         """
