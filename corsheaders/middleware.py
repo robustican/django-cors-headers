@@ -72,7 +72,7 @@ class CorsMiddleware(object):
             request.META = request.META.copy()
             http_referer = request.META['HTTP_REFERER']
             request.META['ORIGINAL_HTTP_REFERER'] = http_referer
-            http_host = request.get_host()
+            http_host = "https://%s/" % request.get_host()
             request.META['HTTP_REFERER'] = http_host
 
             loggly.debug("new referrer:%s" % request.META['HTTP_REFERER'])
